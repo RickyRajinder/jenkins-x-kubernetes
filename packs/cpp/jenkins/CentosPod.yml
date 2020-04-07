@@ -1,0 +1,16 @@
+kind: Pod
+metadata:
+  name: centos
+spec:
+  containers:
+  - name: centos
+    image: rickywraith/centos-devtools:latest
+    tty: true
+  command: [tail]
+      args: [-f, /dev/null]
+      ports:
+        - containerPort: 8086
+  restartPolicy: OnFailure
+  dnsPolicy: Default
+  nodeSelector:
+    beta.kubernetes.io/os: linux
