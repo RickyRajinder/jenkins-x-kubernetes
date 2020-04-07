@@ -3,24 +3,16 @@ agent:
   container: rickywraith/centos-devtools:latest
 pipelines:
   pullRequest:
-    build_cmake:
+    build:
       steps:
       - sh: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
         name: cmake
-    build_make:
-      steps:
-        - dir: build
-          steps:
-          - sh: make install
-          name: make
-    test:
-      steps:
+      - sh: cd build && make install && cd ../
+        name: make
       - sh: ./tests/cxx_11_tests
         name: test_cpp_11
       - sh: ./tests/cxx_98_tests
         name: test_cpp_98
-    container_build:
-      steps:
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
     postBuild:
@@ -35,12 +27,6 @@ pipelines:
           name: make-preview
         - sh: jx preview --app $APP_NAME --dir ../..
           name: jx-preview
-    post:
-      steps:
-      - groovy: always
-        when: "!prow"
-        steps:
-          - groovy: "cleanWs()"
   release:
      setup:
       steps:
@@ -60,20 +46,16 @@ pipelines:
         comment: so we can retrieve the version in later steps
       - sh: jx step tag --version \$(cat VERSION)
         name: tag-version
-     build_make:
+     build:
       steps:
-        - dir: build
-          steps:
-          - sh: make install
-          name: make
-     test:
-      steps:
+      - sh: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
+        name: cmake
+      - sh: cd build && make install && cd ../
+        name: make
       - sh: ./tests/cxx_11_tests
         name: test_cpp_11
       - sh: ./tests/cxx_98_tests
         name: test_cpp_98
-     container_build:
-      steps:
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
      postBuild:
@@ -86,16 +68,7 @@ pipelines:
         steps:
         - sh: jx step changelog --version v\$(cat ../../VERSION)
           name: changelog
-        - comment: release the helm chart
-          sh: jx step helm release
-          name: helm-release
         - comment: promote through all 'Auto' promotion Environments
           sh: jx promote -b --all-auto --timeout 1h --version \$(cat ../../VERSION)
           name: jx-promote
-     post:
-      steps:
-      - groovy: always
-        when: "!prow"
-        steps:
-          - groovy: "cleanWs()"
 
