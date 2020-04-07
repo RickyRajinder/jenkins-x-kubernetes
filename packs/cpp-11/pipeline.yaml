@@ -7,7 +7,7 @@ pipelines:
       steps:
       - sh: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
         name: cmake
-      - sh: cd build && make install && cd ../
+      - sh: cd build && make install
         name: make
       - sh: ./tests/cxx_11_tests
         name: test_cpp_11
@@ -50,7 +50,7 @@ pipelines:
       steps:
       - sh: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
         name: cmake
-      - sh: cd build && make install && cd ../
+      - sh: cd build && make install
         name: make
       - sh: ./tests/cxx_11_tests
         name: test_cpp_11
