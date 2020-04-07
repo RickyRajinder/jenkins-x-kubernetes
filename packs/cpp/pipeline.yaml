@@ -3,16 +3,24 @@ agent:
   container: rickywraith/centos-devtools:latest
 pipelines:
   pullRequest:
-    build:
+    build_cmake:
       steps:
       - sh: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
         name: cmake
-      - sh: make build/install
-        name: make
+    build_make:
+      steps:
+        - dir: build
+          steps:
+          - sh: make install
+          name: make
+    test:
+      steps:
       - sh: ./tests/cxx_11_tests
         name: test_cpp_11
       - sh: ./tests/cxx_98_tests
         name: test_cpp_98
+    container_build:
+      steps:
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
     postBuild:
