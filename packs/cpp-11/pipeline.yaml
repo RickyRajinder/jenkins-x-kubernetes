@@ -56,7 +56,7 @@ pipelines:
         name: test_cpp_11
       - sh: cd build && ./tests/cxx_98_tests
         name: test_cpp_98
-      - sh: docker login -u rickywraith -p Mondoman9 && export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
+      - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
      postBuild:
       steps:
