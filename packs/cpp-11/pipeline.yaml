@@ -9,9 +9,9 @@ pipelines:
         name: cmake
       - sh: cd build && make install
         name: make
-      - sh: ./tests/cxx_11_tests
+      - sh: cd build && ./tests/cxx_11_tests
         name: test_cpp_11
-      - sh: ./tests/cxx_98_tests
+      - sh: cd build && ./tests/cxx_98_tests
         name: test_cpp_98
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
@@ -52,9 +52,9 @@ pipelines:
         name: cmake
       - sh: cd build && make install
         name: make
-      - sh: ./tests/cxx_11_tests
+      - sh: pwd && cd build && ./tests/cxx_11_tests
         name: test_cpp_11
-      - sh: ./tests/cxx_98_tests
+      - sh: cd build && ./tests/cxx_98_tests
         name: test_cpp_98
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
